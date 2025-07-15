@@ -138,107 +138,78 @@ export function Dashboard() {
         </Card>
       </div>
 
-      {/* Meal Assignment Queue */}
+      {/* Assignment Management Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Pending Meal Assignments</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Quick Assignment Actions</h3>
           <div className="space-y-3">
-            <div className="p-4 bg-secondary rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm">User #U247 - Sarah K.</span>
-                <Badge variant="outline" className="text-xs">Pending</Badge>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12"
+              onClick={() => window.location.href = '/assignments'}
+            >
+              <UserCheck className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-medium">Meal Assignment Queue</div>
+                <div className="text-xs text-muted-foreground">23 users pending assignment</div>
               </div>
-              <div className="text-xs text-muted-foreground mb-2">
-                7 meals selected (5 Vendor Food, 2 Home Chef)
-              </div>
-              <Button size="sm" className="w-full">Assign Providers</Button>
-            </div>
+            </Button>
             
-            <div className="p-4 bg-secondary rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm">User #U156 - John D.</span>
-                <Badge variant="outline" className="text-xs">Pending</Badge>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12"
+              onClick={() => window.location.href = '/providers'}
+            >
+              <Building2 className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-medium">Provider Management</div>
+                <div className="text-xs text-muted-foreground">5 vendors, 2 chefs active</div>
               </div>
-              <div className="text-xs text-muted-foreground mb-2">
-                7 meals selected (3 Vendor Food, 4 Home Chef)
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12"
+              onClick={() => window.location.href = '/bulk-assign'}
+            >
+              <RefreshCw className="w-5 h-5 mr-3" />
+              <div className="text-left">
+                <div className="font-medium">Bulk Assignment</div>
+                <div className="text-xs text-muted-foreground">Auto-assign based on preferences</div>
               </div>
-              <Button size="sm" className="w-full">Assign Providers</Button>
-            </div>
-
-            <div className="p-4 bg-secondary rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm">User #U89 - Mike R.</span>
-                <Badge variant="outline" className="text-xs">Pending</Badge>
-              </div>
-              <div className="text-xs text-muted-foreground mb-2">
-                7 meals selected (6 Vendor Food, 1 Home Chef)
-              </div>
-              <Button size="sm" className="w-full">Assign Providers</Button>
-            </div>
+            </Button>
           </div>
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">User Requests Queue</h3>
-          <div className="space-y-3">
-            <div className="p-4 bg-secondary rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm">Switch Request</span>
-                <Badge variant="destructive" className="text-xs">Urgent</Badge>
-              </div>
-              <div className="text-xs text-muted-foreground mb-2">
-                User #U156 - Switch vendor for remaining 4 meals
-              </div>
-              <Button size="sm" variant="outline" className="w-full">Process Request</Button>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Assignment Analytics</h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Weekly Assignment Rate</span>
+              <span className="text-lg font-bold text-green-600">87%</span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div className="bg-green-500 h-2 rounded-full" style={{ width: '87%' }}></div>
             </div>
             
-            <div className="p-4 bg-secondary rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm">Skip Request</span>
-                <Badge variant="secondary" className="text-xs">Normal</Badge>
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <div>
+                <div className="text-lg font-bold text-foreground">156</div>
+                <div className="text-xs text-muted-foreground">Vendor assignments</div>
               </div>
-              <div className="text-xs text-muted-foreground mb-2">
-                User #U89 - Skip Tuesday meal (5 skips remaining)
+              <div>
+                <div className="text-lg font-bold text-foreground">89</div>
+                <div className="text-xs text-muted-foreground">Chef assignments</div>
               </div>
-              <Button size="sm" variant="outline" className="w-full">Approve Skip</Button>
             </div>
-
-            <div className="p-4 bg-secondary rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm">Cancel Request</span>
-                <Badge variant="outline" className="text-xs">Normal</Badge>
-              </div>
-              <div className="text-xs text-muted-foreground mb-2">
-                User #U203 - Cancel Thursday meal (no credit)
-              </div>
-              <Button size="sm" variant="outline" className="w-full">Confirm Cancel</Button>
-            </div>
+            
+            <Button size="sm" variant="outline" className="w-full">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              View Full Analytics
+            </Button>
           </div>
         </Card>
       </div>
-
-      {/* Weekly Assignment Overview */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Weekly Assignment Overview</h3>
-        <div className="grid grid-cols-7 gap-4">
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
-            <div key={day} className="text-center">
-              <h4 className="font-medium text-foreground mb-2">{day}</h4>
-              <div className="space-y-2">
-                <div className="p-2 bg-gradient-vendor rounded text-white text-xs">
-                  Vendor: 45 orders
-                </div>
-                <div className="p-2 bg-gradient-chef rounded text-white text-xs">
-                  Chef: 23 orders
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {Math.floor(Math.random() * 20 + 60)}% assigned
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 }
