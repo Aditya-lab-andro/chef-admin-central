@@ -88,7 +88,11 @@ export function Dashboard() {
               <UserCheck className="w-6 h-6" />
               <span className="text-sm">Assign Meals</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => window.location.href = '/requests'}
+            >
               <RefreshCw className="w-6 h-6" />
               <span className="text-sm">Manage Requests</span>
             </Button>
