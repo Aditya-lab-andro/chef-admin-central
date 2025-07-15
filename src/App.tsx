@@ -5,6 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Dashboard } from "@/components/Dashboard";
+import { ProviderManagement } from "@/components/ProviderManagement";
+import { MenuBuilder } from "@/components/MenuBuilder";
+import { OrderManagement } from "@/components/OrderManagement";
+import { UserManagement } from "@/components/UserManagement";
+import { ServiceZones } from "@/components/ServiceZones";
+import { Analytics } from "@/components/Analytics";
+import { AssignmentDashboard } from "@/components/AssignmentDashboard";
+import { RequestManagementDashboard } from "@/components/RequestManagementDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,51 +32,47 @@ const App = () => (
             } />
             <Route path="/providers" element={
               <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  Provider Management - Coming Soon
-                </div>
+                <ProviderManagement />
               </Layout>
             } />
             <Route path="/menu" element={
               <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  Menu Builder - Coming Soon
-                </div>
+                <MenuBuilder />
               </Layout>
             } />
             <Route path="/calendar" element={
               <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  Meal Calendar - Coming Soon
-                </div>
+                <MenuBuilder />
               </Layout>
             } />
             <Route path="/orders" element={
               <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  Orders Management - Coming Soon
-                </div>
+                <OrderManagement />
               </Layout>
             } />
             <Route path="/users" element={
               <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  User Management - Coming Soon
-                </div>
+                <UserManagement />
               </Layout>
             } />
             <Route path="/zones" element={
               <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  Service Zones - Coming Soon
-                </div>
+                <ServiceZones />
               </Layout>
             } />
             <Route path="/analytics" element={
               <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  Analytics Dashboard - Coming Soon
-                </div>
+                <Analytics />
+              </Layout>
+            } />
+            <Route path="/assignments" element={
+              <Layout>
+                <AssignmentDashboard />
+              </Layout>
+            } />
+            <Route path="/requests" element={
+              <Layout>
+                <RequestManagementDashboard />
               </Layout>
             } />
             <Route path="/settings" element={

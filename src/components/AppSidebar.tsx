@@ -9,7 +9,9 @@ import {
   Settings,
   Home,
   UtensilsCrossed,
-  MapPin
+  MapPin,
+  UserCheck,
+  RefreshCw
 } from "lucide-react";
 
 import {
@@ -32,6 +34,8 @@ const mainNavItems = [
 ];
 
 const operationsItems = [
+  { title: "Assignments", url: "/assignments", icon: UserCheck },
+  { title: "Requests", url: "/requests", icon: RefreshCw },
   { title: "Orders", url: "/orders", icon: CreditCard },
   { title: "Users", url: "/users", icon: Users },
   { title: "Service Zones", url: "/zones", icon: MapPin },

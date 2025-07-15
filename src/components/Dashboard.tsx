@@ -84,7 +84,11 @@ export function Dashboard() {
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => window.location.href = '/assignments'}
+            >
               <UserCheck className="w-6 h-6" />
               <span className="text-sm">Assign Meals</span>
             </Button>
@@ -96,13 +100,21 @@ export function Dashboard() {
               <RefreshCw className="w-6 h-6" />
               <span className="text-sm">Manage Requests</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => window.location.href = '/menu'}
+            >
               <Menu className="w-6 h-6" />
               <span className="text-sm">Update Menus</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => window.location.href = '/analytics'}
+            >
               <CreditCard className="w-6 h-6" />
-              <span className="text-sm">Subscription Plans</span>
+              <span className="text-sm">View Analytics</span>
             </Button>
           </div>
         </Card>
