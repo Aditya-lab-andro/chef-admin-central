@@ -6,7 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Dashboard } from "@/components/Dashboard";
 import { ProviderManagement } from "@/components/ProviderManagement";
+import { MenuManagement } from "@/components/MenuManagement";
 import { MenuBuilder } from "@/components/MenuBuilder";
+import { ProviderDetails } from "@/components/ProviderDetails";
+import { ReviewManagement } from "@/components/ReviewManagement";
 import { OrderManagement } from "@/components/OrderManagement";
 import { UserManagement } from "@/components/UserManagement";
 import { ServiceZones } from "@/components/ServiceZones";
@@ -37,7 +40,7 @@ const App = () => (
             } />
             <Route path="/menu" element={
               <Layout>
-                <MenuBuilder />
+                <MenuManagement />
               </Layout>
             } />
             <Route path="/calendar" element={
@@ -73,6 +76,16 @@ const App = () => (
             <Route path="/requests" element={
               <Layout>
                 <RequestManagementDashboard />
+              </Layout>
+            } />
+            <Route path="/provider-details" element={
+              <Layout>
+                <ProviderDetails />
+              </Layout>
+            } />
+            <Route path="/reviews" element={
+              <Layout>
+                <ReviewManagement />
               </Layout>
             } />
             <Route path="/settings" element={

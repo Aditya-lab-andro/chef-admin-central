@@ -38,6 +38,8 @@ const operationsItems = [
   { title: "Requests", url: "/requests", icon: RefreshCw },
   { title: "Orders", url: "/orders", icon: CreditCard },
   { title: "Users", url: "/users", icon: Users },
+  { title: "Provider Details", url: "/provider-details", icon: Building2 },
+  { title: "Reviews", url: "/reviews", icon: RefreshCw },
   { title: "Service Zones", url: "/zones", icon: MapPin },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ];
