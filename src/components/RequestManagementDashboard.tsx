@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RequestManagementQueue } from "./RequestManagementQueue";
-import { UserCreditTracker } from "./UserCreditTracker";
+import UserCreditTracker from "./UserCreditTracker";
 import { 
   RefreshCw, 
   CreditCard, 

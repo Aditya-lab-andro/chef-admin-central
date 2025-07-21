@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Calendar } from '@/components/ui/calendar';
+import type { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { 
   BarChart, 
@@ -103,7 +104,7 @@ const hourlyOrderData = [
 ];
 
 const Analytics: React.FC = () => {
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({ 
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({ 
     from: new Date(2024, 0, 1), 
     to: new Date() 
   });
