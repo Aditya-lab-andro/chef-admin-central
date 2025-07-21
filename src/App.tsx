@@ -16,9 +16,12 @@ import { ServiceZones } from "@/components/ServiceZones";
 import { Analytics } from "@/components/Analytics";
 import { AssignmentDashboard } from "@/components/AssignmentDashboard";
 import { RequestManagementDashboard } from "@/components/RequestManagementDashboard";
-import { OrderAssignmentSystem } from "@/components/OrderAssignmentSystem";
-import { KitchenManagement } from "@/components/KitchenManagement";
-import { LocationZoneManagement } from "@/components/LocationZoneManagement";
+import { OrderAssignmentSystem } from '@/components/OrderAssignmentSystem';
+import { KitchenManagement } from '@/components/KitchenManagement';
+import { LocationZoneManagement } from '@/components/LocationZoneManagement';
+import { SubscriptionPlans } from '@/components/SubscriptionPlans';
+import { PromoCodeManagement } from '@/components/PromoCodeManagement';
+import { TransactionManagement } from '@/components/TransactionManagement';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -104,6 +107,21 @@ const App = () => (
             <Route path="/location-zones" element={
               <Layout>
                 <LocationZoneManagement />
+              </Layout>
+            } />
+            <Route path="/subscriptions" element={
+              <Layout>
+                <SubscriptionPlans />
+              </Layout>
+            } />
+            <Route path="/promo-codes" element={
+              <Layout>
+                <PromoCodeManagement />
+              </Layout>
+            } />
+            <Route path="/transactions" element={
+              <Layout>
+                <TransactionManagement />
               </Layout>
             } />
             <Route path="/settings" element={

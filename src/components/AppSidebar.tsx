@@ -11,7 +11,8 @@ import {
   UtensilsCrossed,
   MapPin,
   UserCheck,
-  RefreshCw
+  RefreshCw,
+  Tag
 } from "lucide-react";
 
 import {
@@ -46,6 +47,10 @@ const operationsItems = [
   { title: "Order Assignment", url: "/order-assignment", icon: UserCheck },
   { title: "Kitchen Management", url: "/kitchen-management", icon: ChefHat },
   { title: "Location Zones", url: "/location-zones", icon: MapPin },
+  // Phase 3 Features
+  { title: "Subscription Plans", url: "/subscriptions", icon: Calendar },
+  { title: "Promo Codes", url: "/promo-codes", icon: Tag },
+  { title: "Transactions", url: "/transactions", icon: CreditCard },
 ];
 
 const systemItems = [
