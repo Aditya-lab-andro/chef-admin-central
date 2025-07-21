@@ -11,9 +11,7 @@ import { MenuBuilder } from "@/components/MenuBuilder";
 import { ProviderDetails } from "@/components/ProviderDetails";
 import { ReviewManagement } from "@/components/ReviewManagement";
 import { OrderManagement } from "@/components/OrderManagement";
-import { UserManagement } from "@/components/UserManagement";
 import { ServiceZones } from "@/components/ServiceZones";
-import { Analytics } from "@/components/Analytics";
 import { AssignmentDashboard } from "@/components/AssignmentDashboard";
 import { RequestManagementDashboard } from "@/components/RequestManagementDashboard";
 import { OrderAssignmentSystem } from '@/components/OrderAssignmentSystem';
@@ -22,6 +20,9 @@ import { LocationZoneManagement } from '@/components/LocationZoneManagement';
 import { SubscriptionPlans } from '@/components/SubscriptionPlans';
 import { PromoCodeManagement } from '@/components/PromoCodeManagement';
 import { TransactionManagement } from '@/components/TransactionManagement';
+import UserManagement from './components/UserManagement';
+import Analytics from './components/Analytics';
+import UserCreditTracker from './components/UserCreditTracker';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -122,6 +123,11 @@ const App = () => (
             <Route path="/transactions" element={
               <Layout>
                 <TransactionManagement />
+              </Layout>
+            } />
+            <Route path="/credits" element={
+              <Layout>
+                <UserCreditTracker />
               </Layout>
             } />
             <Route path="/settings" element={

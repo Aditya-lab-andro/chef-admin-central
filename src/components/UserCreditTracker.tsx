@@ -1,350 +1,643 @@
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  User, 
-  SkipForward, 
-  Gift, 
+  Search, 
+  Plus, 
+  Minus, 
+  CreditCard, 
+  DollarSign, 
   TrendingUp, 
-  Calendar,
-  AlertTriangle,
+  TrendingDown,
+  Filter,
+  Download,
+  RefreshCw,
+  Gift,
+  Award,
+  AlertCircle,
   CheckCircle,
-  CreditCard,
-  Users
-} from "lucide-react";
+  Calendar,
+  User
+} from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-interface UserCredit {
+interface CreditTransaction {
+  id: string;
   userId: string;
   userName: string;
-  email: string;
-  skipCreditsRemaining: number;
-  skipCreditsUsed: number;
-  totalSkipCredits: number;
-  referralCredits: number;
-  totalReferrals: number;
-  subscriptionPlan: string;
-  joinDate: string;
-  lastSkipUsed?: string;
-  creditExpiryDate?: string;
+  userAvatar?: string;
+  type: 'credit' | 'debit' | 'refund' | 'bonus' | 'penalty';
+  amount: number;
+  reason: string;
+  description?: string;
+  balanceBefore: number;
+  balanceAfter: number;
+  timestamp: string;
+  status: 'completed' | 'pending' | 'failed';
+  adminId?: string;
+  adminName?: string;
 }
 
-const mockUserCredits: UserCredit[] = [
+interface UserCredit {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  currentBalance: number;
+  totalEarned: number;
+  totalSpent: number;
+  lastTransaction: string;
+  status: 'active' | 'suspended' | 'limited';
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+}
+
+const mockTransactions: CreditTransaction[] = [
   {
-    userId: "U247",
-    userName: "Sarah K.",
-    email: "sarah.k@email.com",
-    skipCreditsRemaining: 6,
-    skipCreditsUsed: 0,
-    totalSkipCredits: 6,
-    referralCredits: 2,
-    totalReferrals: 3,
-    subscriptionPlan: "Monthly Premium",
-    joinDate: "2024-01-15"
+    id: '1',
+    userId: 'u1',
+    userName: 'John Doe',
+    userAvatar: '/api/placeholder/40/40',
+    type: 'credit',
+    amount: 50.00,
+    reason: 'Order refund',
+    description: 'Refund for cancelled order #ORD-001',
+    balanceBefore: 25.50,
+    balanceAfter: 75.50,
+    timestamp: '2024-12-20T10:30:00Z',
+    status: 'completed',
+    adminId: 'admin1',
+    adminName: 'Admin User'
   },
   {
-    userId: "U156", 
-    userName: "John D.",
-    email: "john.d@email.com",
-    skipCreditsRemaining: 3,
-    skipCreditsUsed: 3,
-    totalSkipCredits: 6,
-    referralCredits: 1,
-    totalReferrals: 2,
-    subscriptionPlan: "Weekly Basic",
-    joinDate: "2024-01-20",
-    lastSkipUsed: "2024-01-22"
+    id: '2',
+    userId: 'u2',
+    userName: 'Sarah Johnson',
+    type: 'debit',
+    amount: 25.00,
+    reason: 'Order payment',
+    description: 'Payment for order #ORD-002',
+    balanceBefore: 100.00,
+    balanceAfter: 75.00,
+    timestamp: '2024-12-20T09:15:00Z',
+    status: 'completed'
   },
   {
-    userId: "U89",
-    userName: "Mike R.", 
-    email: "mike.r@email.com",
-    skipCreditsRemaining: 2,
-    skipCreditsUsed: 4,
-    totalSkipCredits: 6,
-    referralCredits: 5,
-    totalReferrals: 8,
-    subscriptionPlan: "Monthly Standard",
-    joinDate: "2024-01-18",
-    lastSkipUsed: "2024-01-24"
+    id: '3',
+    userId: 'u3',
+    userName: 'Mike Wilson',
+    type: 'bonus',
+    amount: 10.00,
+    reason: 'Referral bonus',
+    description: 'Bonus for referring a new user',
+    balanceBefore: 40.00,
+    balanceAfter: 50.00,
+    timestamp: '2024-12-19T16:45:00Z',
+    status: 'completed',
+    adminId: 'admin1',
+    adminName: 'Admin User'
   },
   {
-    userId: "U203",
-    userName: "Sarah M.",
-    email: "sarah.m@email.com", 
-    skipCreditsRemaining: 0,
-    skipCreditsUsed: 6,
-    totalSkipCredits: 6,
-    referralCredits: 0,
-    totalReferrals: 1,
-    subscriptionPlan: "Monthly Premium",
-    joinDate: "2024-01-10",
-    lastSkipUsed: "2024-01-23"
-  },
-  {
-    userId: "U178",
-    userName: "Lisa K.",
-    email: "lisa.k@email.com",
-    skipCreditsRemaining: 5,
-    skipCreditsUsed: 1, 
-    totalSkipCredits: 6,
-    referralCredits: 3,
-    totalReferrals: 4,
-    subscriptionPlan: "Monthly Standard",
-    joinDate: "2024-01-12",
-    lastSkipUsed: "2024-01-20"
+    id: '4',
+    userId: 'u4',
+    userName: 'Lisa Chen',
+    type: 'credit',
+    amount: 15.75,
+    reason: 'Manual adjustment',
+    description: 'Credit adjustment for service issue',
+    balanceBefore: 12.25,
+    balanceAfter: 28.00,
+    timestamp: '2024-12-19T14:20:00Z',
+    status: 'completed',
+    adminId: 'admin2',
+    adminName: 'Support Team'
   }
 ];
 
-export function UserCreditTracker() {
-  const totalUsers = mockUserCredits.length;
-  const usersWithNoSkips = mockUserCredits.filter(user => user.skipCreditsRemaining === 0).length;
-  const usersWithLowSkips = mockUserCredits.filter(user => user.skipCreditsRemaining <= 2 && user.skipCreditsRemaining > 0).length;
-  const totalReferralCredits = mockUserCredits.reduce((sum, user) => sum + user.referralCredits, 0);
-  const averageSkipsUsed = (mockUserCredits.reduce((sum, user) => sum + user.skipCreditsUsed, 0) / totalUsers).toFixed(1);
+const mockUsers: UserCredit[] = [
+  {
+    id: 'u1',
+    name: 'John Doe',
+    email: 'john.doe@email.com',
+    avatar: '/api/placeholder/40/40',
+    currentBalance: 75.50,
+    totalEarned: 325.00,
+    totalSpent: 249.50,
+    lastTransaction: '2024-12-20T10:30:00Z',
+    status: 'active',
+    tier: 'gold'
+  },
+  {
+    id: 'u2',
+    name: 'Sarah Johnson',
+    email: 'sarah.j@email.com',
+    currentBalance: 75.00,
+    totalEarned: 180.00,
+    totalSpent: 105.00,
+    lastTransaction: '2024-12-20T09:15:00Z',
+    status: 'active',
+    tier: 'silver'
+  },
+  {
+    id: 'u3',
+    name: 'Mike Wilson',
+    email: 'mike.w@email.com',
+    currentBalance: 50.00,
+    totalEarned: 150.00,
+    totalSpent: 100.00,
+    lastTransaction: '2024-12-19T16:45:00Z',
+    status: 'active',
+    tier: 'bronze'
+  },
+  {
+    id: 'u4',
+    name: 'Lisa Chen',
+    email: 'lisa.c@email.com',
+    currentBalance: 28.00,
+    totalEarned: 95.00,
+    totalSpent: 67.00,
+    lastTransaction: '2024-12-19T14:20:00Z',
+    status: 'active',
+    tier: 'silver'
+  }
+];
 
-  const getSkipCreditColor = (remaining: number, total: number) => {
-    const percentage = (remaining / total) * 100;
-    if (percentage === 0) return 'text-red-600';
-    if (percentage <= 33) return 'text-orange-600';
-    if (percentage <= 66) return 'text-yellow-600';
-    return 'text-green-600';
+const UserCreditTracker: React.FC = () => {
+  const [transactions, setTransactions] = useState<CreditTransaction[]>(mockTransactions);
+  const [users, setUsers] = useState<UserCredit[]>(mockUsers);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [selectedUser, setSelectedUser] = useState<UserCredit | null>(null);
+  const [isAdjustmentDialogOpen, setIsAdjustmentDialogOpen] = useState(false);
+  const [adjustmentAmount, setAdjustmentAmount] = useState('');
+  const [adjustmentReason, setAdjustmentReason] = useState('');
+  const [adjustmentDescription, setAdjustmentDescription] = useState('');
+  const [adjustmentType, setAdjustmentType] = useState<'credit' | 'debit'>('credit');
+
+  const getTypeColor = (type: CreditTransaction['type']) => {
+    switch (type) {
+      case 'credit': return 'bg-success text-success-foreground';
+      case 'debit': return 'bg-destructive text-destructive-foreground';
+      case 'refund': return 'bg-primary text-primary-foreground';
+      case 'bonus': return 'bg-secondary text-secondary-foreground';
+      case 'penalty': return 'bg-warning text-warning-foreground';
+      default: return 'bg-muted text-muted-foreground';
+    }
   };
 
-  const getSkipCreditBadge = (remaining: number) => {
-    if (remaining === 0) return <Badge variant="destructive" className="text-xs">No Skips</Badge>;
-    if (remaining <= 2) return <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">Low</Badge>;
-    return <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">Available</Badge>;
+  const getStatusColor = (status: CreditTransaction['status']) => {
+    switch (status) {
+      case 'completed': return 'bg-success text-success-foreground';
+      case 'pending': return 'bg-warning text-warning-foreground';
+      case 'failed': return 'bg-destructive text-destructive-foreground';
+      default: return 'bg-muted text-muted-foreground';
+    }
   };
+
+  const getTierColor = (tier: UserCredit['tier']) => {
+    switch (tier) {
+      case 'platinum': return 'bg-gradient-to-r from-purple-500 to-pink-500 text-white';
+      case 'gold': return 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white';
+      case 'silver': return 'bg-gradient-to-r from-gray-400 to-gray-600 text-white';
+      case 'bronze': return 'bg-gradient-to-r from-amber-600 to-amber-800 text-white';
+      default: return 'bg-muted text-muted-foreground';
+    }
+  };
+
+  const filteredTransactions = transactions.filter(transaction => {
+    const matchesSearch = transaction.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         transaction.reason.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || transaction.status === statusFilter;
+    const matchesType = typeFilter === 'all' || transaction.type === typeFilter;
+    
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  const filteredUsers = users.filter(user => {
+    return user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const handleCreditAdjustment = () => {
+    if (!selectedUser || !adjustmentAmount) return;
+
+    const amount = parseFloat(adjustmentAmount);
+    const newTransaction: CreditTransaction = {
+      id: `tx-${Date.now()}`,
+      userId: selectedUser.id,
+      userName: selectedUser.name,
+      userAvatar: selectedUser.avatar,
+      type: adjustmentType,
+      amount: Math.abs(amount),
+      reason: adjustmentReason || 'Manual adjustment',
+      description: adjustmentDescription,
+      balanceBefore: selectedUser.currentBalance,
+      balanceAfter: adjustmentType === 'credit' 
+        ? selectedUser.currentBalance + Math.abs(amount)
+        : selectedUser.currentBalance - Math.abs(amount),
+      timestamp: new Date().toISOString(),
+      status: 'completed',
+      adminId: 'current-admin',
+      adminName: 'Current Admin'
+    };
+
+    setTransactions([newTransaction, ...transactions]);
+    setUsers(users.map(user => 
+      user.id === selectedUser.id 
+        ? { ...user, currentBalance: newTransaction.balanceAfter }
+        : user
+    ));
+
+    setIsAdjustmentDialogOpen(false);
+    setAdjustmentAmount('');
+    setAdjustmentReason('');
+    setAdjustmentDescription('');
+    setSelectedUser(null);
+  };
+
+  // Statistics
+  const totalCreditsIssued = transactions
+    .filter(t => ['credit', 'refund', 'bonus'].includes(t.type))
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  const totalCreditsUsed = transactions
+    .filter(t => t.type === 'debit')
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  const totalActiveBalance = users.reduce((sum, u) => sum + u.currentBalance, 0);
+  const averageBalance = totalActiveBalance / users.length;
 
   return (
-    <div className="space-y-6">
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-500" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Users with No Skips</p>
-              <p className="text-2xl font-bold text-foreground">{usersWithNoSkips}</p>
-              <p className="text-xs text-red-600">Need attention</p>
-            </div>
-          </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Credit Tracker</h1>
+          <p className="text-muted-foreground">Monitor and manage user credit balances and transactions</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+          <Button variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+        </div>
+      </div>
+
+      {/* Statistics */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Credits Issued</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalCreditsIssued.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">+8.5% from last month</p>
+          </CardContent>
         </Card>
-        
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <SkipForward className="w-5 h-5 text-orange-500" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Low Skip Credits</p>
-              <p className="text-2xl font-bold text-foreground">{usersWithLowSkips}</p>
-              <p className="text-xs text-orange-600">≤2 skips remaining</p>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Credits Used</CardTitle>
+            <TrendingDown className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalCreditsUsed.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">+12.3% from last month</p>
+          </CardContent>
         </Card>
-        
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <Gift className="w-5 h-5 text-purple-500" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Referral Credits</p>
-              <p className="text-2xl font-bold text-foreground">{totalReferralCredits}</p>
-              <p className="text-xs text-success">Total earned</p>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Active Balance</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalActiveBalance.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">Across {users.length} users</p>
+          </CardContent>
         </Card>
-        
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <TrendingUp className="w-5 h-5 text-blue-500" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Avg Skips Used</p>
-              <p className="text-2xl font-bold text-foreground">{averageSkipsUsed}</p>
-              <p className="text-xs text-muted-foreground">Per user</p>
-            </div>
-          </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Balance</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${averageBalance.toFixed(2)}</div>
+            <p className="text-xs text-muted-foreground">Per active user</p>
+          </CardContent>
         </Card>
       </div>
 
-      {/* User Credit Overview */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-foreground">User Credit Management</h3>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Gift className="w-4 h-4 mr-2" />
-              Add Credits
-            </Button>
-            <Button variant="outline" size="sm">
-              Export Report
-            </Button>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          {mockUserCredits.map((user) => (
-            <div key={user.userId} className="p-4 bg-secondary rounded-lg">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">User #{user.userId} - {user.userName}</span>
-                      {getSkipCreditBadge(user.skipCreditsRemaining)}
-                    </div>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
-                    <p className="text-xs text-muted-foreground">{user.subscriptionPlan}</p>
-                  </div>
-                </div>
-                
-                <div className="text-right">
-                  <div className="text-sm font-medium">
-                    Member since {new Date(user.joinDate).toLocaleDateString()}
-                  </div>
-                  {user.lastSkipUsed && (
-                    <div className="text-xs text-muted-foreground">
-                      Last skip: {new Date(user.lastSkipUsed).toLocaleDateString()}
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {/* Skip Credits */}
-                <div className="p-3 bg-background rounded border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <SkipForward className="w-4 h-4 text-blue-500" />
-                    <span className="text-sm font-medium">Skip Credits</span>
-                  </div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Remaining</span>
-                    <span className={`text-sm font-bold ${getSkipCreditColor(user.skipCreditsRemaining, user.totalSkipCredits)}`}>
-                      {user.skipCreditsRemaining}/{user.totalSkipCredits}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={(user.skipCreditsRemaining / user.totalSkipCredits) * 100} 
-                    className="h-2"
+      {/* Main Content */}
+      <Tabs defaultValue="transactions" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          <TabsTrigger value="users">User Balances</TabsTrigger>
+          <TabsTrigger value="adjustments">Manual Adjustments</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="transactions" className="space-y-4">
+          {/* Filters */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Transaction Filters</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4 items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by user name or reason..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8"
                   />
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {user.skipCreditsUsed} used this cycle
-                  </div>
                 </div>
-                
-                {/* Referral Credits */}
-                <div className="p-3 bg-background rounded border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Gift className="w-4 h-4 text-purple-500" />
-                    <span className="text-sm font-medium">Referral Credits</span>
-                  </div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Available</span>
-                    <span className="text-sm font-bold text-purple-600">
-                      {user.referralCredits}
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    From {user.totalReferrals} referrals
-                  </div>
-                </div>
-                
-                {/* Account Status */}
-                <div className="p-3 bg-background rounded border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CreditCard className="w-4 h-4 text-green-500" />
-                    <span className="text-sm font-medium">Account Status</span>
-                  </div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <CheckCircle className="w-3 h-3 text-green-500" />
-                    <span className="text-xs text-green-600">Active</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {user.subscriptionPlan}
-                  </div>
-                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="credit">Credit</SelectItem>
+                    <SelectItem value="debit">Debit</SelectItem>
+                    <SelectItem value="refund">Refund</SelectItem>
+                    <SelectItem value="bonus">Bonus</SelectItem>
+                    <SelectItem value="penalty">Penalty</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="flex-1">
-                  <SkipForward className="w-4 h-4 mr-2" />
-                  Add Skip Credits
-                </Button>
-                <Button size="sm" variant="outline" className="flex-1">
-                  <Gift className="w-4 h-4 mr-2" />
-                  Add Referral Credits
-                </Button>
-                <Button size="sm" variant="outline">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  View History
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* Credit Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Skip Credit Usage Patterns</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">0 skips used</span>
-              <span className="text-sm font-medium">
-                {mockUserCredits.filter(u => u.skipCreditsUsed === 0).length} users
-              </span>
+          {/* Transactions Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Transactions ({filteredTransactions.length})</CardTitle>
+              <CardDescription>All credit transactions and balance changes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Reason</TableHead>
+                      <TableHead>Balance Change</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Admin</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredTransactions.map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={transaction.userAvatar} />
+                              <AvatarFallback>{transaction.userName.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium">{transaction.userName}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getTypeColor(transaction.type)}>
+                            {transaction.type}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <span className={transaction.type === 'debit' ? 'text-destructive' : 'text-success'}>
+                            {transaction.type === 'debit' ? '-' : '+'}${transaction.amount.toFixed(2)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{transaction.reason}</div>
+                            {transaction.description && (
+                              <div className="text-sm text-muted-foreground">{transaction.description}</div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            <div>${transaction.balanceBefore.toFixed(2)} → ${transaction.balanceAfter.toFixed(2)}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(transaction.status)}>
+                            {transaction.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {new Date(transaction.timestamp).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {transaction.adminName || 'System'}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="users" className="space-y-4">
+          {/* Search */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search users by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Users Grid */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredUsers.map((user) => (
+              <Card key={user.id}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Avatar>
+                        <AvatarImage src={user.avatar} />
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{user.name}</div>
+                        <div className="text-sm text-muted-foreground">{user.email}</div>
+                      </div>
+                    </div>
+                    <Badge className={getTierColor(user.tier)}>
+                      {user.tier}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <div className="text-muted-foreground">Current Balance</div>
+                      <div className="font-bold text-lg">${user.currentBalance.toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Total Earned</div>
+                      <div className="font-medium text-success">${user.totalEarned.toFixed(2)}</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <div className="text-muted-foreground">Total Spent</div>
+                      <div className="font-medium text-muted-foreground">${user.totalSpent.toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Last Transaction</div>
+                      <div className="font-medium">{new Date(user.lastTransaction).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={() => {setSelectedUser(user); setIsAdjustmentDialogOpen(true);}}
+                  >
+                    Adjust Credits
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="adjustments" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Credit Adjustments</CardTitle>
+              <CardDescription>Manage user credits with predefined actions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-3">
+                <Button variant="outline" className="h-20 flex-col">
+                  <Gift className="h-6 w-6 mb-2" />
+                  Bulk Bonus Credits
+                </Button>
+                <Button variant="outline" className="h-20 flex-col">
+                  <Award className="h-6 w-6 mb-2" />
+                  Loyalty Rewards
+                </Button>
+                <Button variant="outline" className="h-20 flex-col">
+                  <RefreshCw className="h-6 w-6 mb-2" />
+                  Refund Processing
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Credit Adjustment Dialog */}
+      <Dialog open={isAdjustmentDialogOpen} onOpenChange={setIsAdjustmentDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Credit Adjustment</DialogTitle>
+            <DialogDescription>
+              {selectedUser && `Adjust credits for ${selectedUser.name} (Current: $${selectedUser.currentBalance.toFixed(2)})`}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="adjustment-type">Type</Label>
+                <Select value={adjustmentType} onValueChange={(value: 'credit' | 'debit') => setAdjustmentType(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="credit">Add Credits</SelectItem>
+                    <SelectItem value="debit">Deduct Credits</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="adjustment-amount">Amount ($)</Label>
+                <Input
+                  id="adjustment-amount"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={adjustmentAmount}
+                  onChange={(e) => setAdjustmentAmount(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">1-2 skips used</span>
-              <span className="text-sm font-medium">
-                {mockUserCredits.filter(u => u.skipCreditsUsed >= 1 && u.skipCreditsUsed <= 2).length} users
-              </span>
+            <div className="space-y-2">
+              <Label htmlFor="adjustment-reason">Reason</Label>
+              <Input
+                id="adjustment-reason"
+                placeholder="Reason for adjustment"
+                value={adjustmentReason}
+                onChange={(e) => setAdjustmentReason(e.target.value)}
+              />
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">3-4 skips used</span>
-              <span className="text-sm font-medium">
-                {mockUserCredits.filter(u => u.skipCreditsUsed >= 3 && u.skipCreditsUsed <= 4).length} users
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">5-6 skips used</span>
-              <span className="text-sm font-medium">
-                {mockUserCredits.filter(u => u.skipCreditsUsed >= 5).length} users
-              </span>
+            <div className="space-y-2">
+              <Label htmlFor="adjustment-description">Description (Optional)</Label>
+              <Textarea
+                id="adjustment-description"
+                placeholder="Additional details about the adjustment"
+                value={adjustmentDescription}
+                onChange={(e) => setAdjustmentDescription(e.target.value)}
+              />
             </div>
           </div>
-        </Card>
-
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Referral Program Performance</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Total Referrals</span>
-              <span className="text-lg font-bold text-foreground">
-                {mockUserCredits.reduce((sum, user) => sum + user.totalReferrals, 0)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Active Referrers</span>
-              <span className="text-lg font-bold text-foreground">
-                {mockUserCredits.filter(u => u.totalReferrals > 0).length}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Avg Referrals per User</span>
-              <span className="text-lg font-bold text-foreground">
-                {(mockUserCredits.reduce((sum, user) => sum + user.totalReferrals, 0) / totalUsers).toFixed(1)}
-              </span>
-            </div>
-            <Button size="sm" variant="outline" className="w-full">
-              <Users className="w-4 h-4 mr-2" />
-              Manage Referral Program
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAdjustmentDialogOpen(false)}>
+              Cancel
             </Button>
-          </div>
-        </Card>
-      </div>
+            <Button onClick={handleCreditAdjustment} disabled={!adjustmentAmount || !adjustmentReason}>
+              Apply Adjustment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-}
+};
+
+export default UserCreditTracker;
