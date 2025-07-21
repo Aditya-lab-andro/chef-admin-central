@@ -16,6 +16,9 @@ import { ServiceZones } from "@/components/ServiceZones";
 import { Analytics } from "@/components/Analytics";
 import { AssignmentDashboard } from "@/components/AssignmentDashboard";
 import { RequestManagementDashboard } from "@/components/RequestManagementDashboard";
+import { OrderAssignmentSystem } from "@/components/OrderAssignmentSystem";
+import { KitchenManagement } from "@/components/KitchenManagement";
+import { LocationZoneManagement } from "@/components/LocationZoneManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -86,6 +89,21 @@ const App = () => (
             <Route path="/reviews" element={
               <Layout>
                 <ReviewManagement />
+              </Layout>
+            } />
+            <Route path="/order-assignment" element={
+              <Layout>
+                <OrderAssignmentSystem />
+              </Layout>
+            } />
+            <Route path="/kitchen-management" element={
+              <Layout>
+                <KitchenManagement />
+              </Layout>
+            } />
+            <Route path="/location-zones" element={
+              <Layout>
+                <LocationZoneManagement />
               </Layout>
             } />
             <Route path="/settings" element={

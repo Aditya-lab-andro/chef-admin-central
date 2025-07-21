@@ -42,6 +42,10 @@ const operationsItems = [
   { title: "Reviews", url: "/reviews", icon: RefreshCw },
   { title: "Service Zones", url: "/zones", icon: MapPin },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  // Phase 2 Features
+  { title: "Order Assignment", url: "/order-assignment", icon: UserCheck },
+  { title: "Kitchen Management", url: "/kitchen-management", icon: ChefHat },
+  { title: "Location Zones", url: "/location-zones", icon: MapPin },
 ];
 
 const systemItems = [
