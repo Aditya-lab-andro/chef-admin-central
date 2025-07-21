@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RequestManagementQueue } from "./RequestManagementQueue";
-import UserCreditTracker from "./UserCreditTracker";
+
 import { 
   RefreshCw, 
   CreditCard, 
@@ -91,23 +91,15 @@ export function RequestManagementDashboard() {
 
       {/* Main Request Management Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-1">
           <TabsTrigger value="requests" className="flex items-center gap-2">
             <RefreshCw className="w-4 h-4" />
             Request Queue
-          </TabsTrigger>
-          <TabsTrigger value="credits" className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4" />
-            Credit Management
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="requests" className="space-y-4">
           <RequestManagementQueue />
-        </TabsContent>
-        
-        <TabsContent value="credits" className="space-y-4">
-          <UserCreditTracker />
         </TabsContent>
       </Tabs>
     </div>
