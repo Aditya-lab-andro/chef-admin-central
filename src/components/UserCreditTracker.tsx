@@ -47,6 +47,13 @@ interface CreditTransaction {
   adminName?: string;
 }
 
+interface MealSkip {
+  id: string;
+  date: string;
+  reason?: string;
+  mealType: 'breakfast' | 'lunch' | 'dinner';
+}
+
 interface UserCredit {
   id: string;
   name: string;
@@ -58,6 +65,12 @@ interface UserCredit {
   lastTransaction: string;
   status: 'active' | 'suspended' | 'limited';
   tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  subscriptionStartDate: string;
+  subscriptionEndDate: string;
+  originalEndDate: string;
+  mealsSkipped: number;
+  maxSkipsAllowed: number;
+  skipHistory: MealSkip[];
 }
 
 const mockTransactions: CreditTransaction[] = [
@@ -133,7 +146,17 @@ const mockUsers: UserCredit[] = [
     totalSpent: 249.50,
     lastTransaction: '2024-12-20T10:30:00Z',
     status: 'active',
-    tier: 'gold'
+    tier: 'gold',
+    subscriptionStartDate: '2024-11-01',
+    subscriptionEndDate: '2025-01-05',
+    originalEndDate: '2024-12-30',
+    mealsSkipped: 3,
+    maxSkipsAllowed: 6,
+    skipHistory: [
+      { id: 's1', date: '2024-11-15', reason: 'Traveling', mealType: 'lunch' },
+      { id: 's2', date: '2024-12-02', reason: 'Sick', mealType: 'dinner' },
+      { id: 's3', date: '2024-12-18', reason: 'Work meeting', mealType: 'breakfast' }
+    ]
   },
   {
     id: 'u2',
@@ -144,7 +167,13 @@ const mockUsers: UserCredit[] = [
     totalSpent: 105.00,
     lastTransaction: '2024-12-20T09:15:00Z',
     status: 'active',
-    tier: 'silver'
+    tier: 'silver',
+    subscriptionStartDate: '2024-10-15',
+    subscriptionEndDate: '2025-01-15',
+    originalEndDate: '2025-01-15',
+    mealsSkipped: 0,
+    maxSkipsAllowed: 6,
+    skipHistory: []
   },
   {
     id: 'u3',
@@ -155,7 +184,15 @@ const mockUsers: UserCredit[] = [
     totalSpent: 100.00,
     lastTransaction: '2024-12-19T16:45:00Z',
     status: 'active',
-    tier: 'bronze'
+    tier: 'bronze',
+    subscriptionStartDate: '2024-11-10',
+    subscriptionEndDate: '2025-02-12',
+    originalEndDate: '2025-02-10',
+    mealsSkipped: 1,
+    maxSkipsAllowed: 6,
+    skipHistory: [
+      { id: 's4', date: '2024-12-10', reason: 'Family event', mealType: 'dinner' }
+    ]
   },
   {
     id: 'u4',
@@ -166,7 +203,13 @@ const mockUsers: UserCredit[] = [
     totalSpent: 67.00,
     lastTransaction: '2024-12-19T14:20:00Z',
     status: 'active',
-    tier: 'silver'
+    tier: 'silver',
+    subscriptionStartDate: '2024-12-01',
+    subscriptionEndDate: '2025-03-01',
+    originalEndDate: '2025-03-01',
+    mealsSkipped: 0,
+    maxSkipsAllowed: 6,
+    skipHistory: []
   }
 ];
 
@@ -345,6 +388,7 @@ const UserCreditTracker: React.FC = () => {
         <TabsList>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
           <TabsTrigger value="users">User Balances</TabsTrigger>
+          <TabsTrigger value="meal-skips">Meal Skip Tracker</TabsTrigger>
           <TabsTrigger value="adjustments">Manual Adjustments</TabsTrigger>
         </TabsList>
 
@@ -540,6 +584,172 @@ const UserCreditTracker: React.FC = () => {
                   >
                     Adjust Credits
                   </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="meal-skips" className="space-y-4">
+          {/* Search */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search users by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Meal Skip Overview */}
+          <div className="grid gap-4 md:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Skips Today</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">12</div>
+                <p className="text-xs text-muted-foreground">Across all users</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Users Near Limit</CardTitle>
+                <AlertCircle className="h-4 w-4 text-warning" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">2</div>
+                <p className="text-xs text-muted-foreground">5+ skips used</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Extended Subscriptions</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">3</div>
+                <p className="text-xs text-muted-foreground">Auto-extended</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Average Skips</CardTitle>
+                <User className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">1.5</div>
+                <p className="text-xs text-muted-foreground">Per user</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Users Skip Details */}
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+            {filteredUsers.map((user) => (
+              <Card key={user.id}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Avatar>
+                        <AvatarImage src={user.avatar} />
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{user.name}</div>
+                        <div className="text-sm text-muted-foreground">{user.email}</div>
+                      </div>
+                    </div>
+                    <Badge className={getTierColor(user.tier)}>
+                      {user.tier}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Skip Statistics */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Meals Skipped</div>
+                      <div className="flex items-center space-x-2">
+                        <div className="text-lg font-bold">{user.mealsSkipped}/{user.maxSkipsAllowed}</div>
+                        {user.mealsSkipped >= 5 && (
+                          <AlertCircle className="h-4 w-4 text-warning" />
+                        )}
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            user.mealsSkipped >= 5 ? 'bg-warning' : 
+                            user.mealsSkipped >= 3 ? 'bg-primary' : 'bg-success'
+                          }`}
+                          style={{ width: `${(user.mealsSkipped / user.maxSkipsAllowed) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Remaining Skips</div>
+                      <div className="text-lg font-bold">{user.maxSkipsAllowed - user.mealsSkipped}</div>
+                    </div>
+                  </div>
+
+                  {/* Subscription Dates */}
+                  <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div className="text-muted-foreground">Original End Date</div>
+                        <div className="font-medium">{new Date(user.originalEndDate).toLocaleDateString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">Current End Date</div>
+                        <div className="font-medium">{new Date(user.subscriptionEndDate).toLocaleDateString()}</div>
+                      </div>
+                    </div>
+                    {user.subscriptionEndDate !== user.originalEndDate && (
+                      <div className="text-xs text-success flex items-center space-x-1">
+                        <CheckCircle className="h-3 w-3" />
+                        <span>Extended by {Math.ceil((new Date(user.subscriptionEndDate).getTime() - new Date(user.originalEndDate).getTime()) / (1000 * 60 * 60 * 24))} days</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Skip History */}
+                  {user.skipHistory.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="text-sm font-medium">Recent Skips</div>
+                      <div className="space-y-1 max-h-32 overflow-y-auto">
+                        {user.skipHistory.slice(-3).map((skip) => (
+                          <div key={skip.id} className="flex justify-between items-center text-xs p-2 bg-muted/30 rounded">
+                            <div>
+                              <span className="font-medium">{skip.mealType}</span>
+                              {skip.reason && (
+                                <span className="text-muted-foreground"> - {skip.reason}</span>
+                              )}
+                            </div>
+                            <div className="text-muted-foreground">
+                              {new Date(skip.date).toLocaleDateString()}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {user.skipHistory.length > 3 && (
+                        <div className="text-xs text-muted-foreground text-center">
+                          +{user.skipHistory.length - 3} more skips
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {user.skipHistory.length === 0 && (
+                    <div className="text-center py-4 text-muted-foreground text-sm">
+                      No meal skips recorded
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
