@@ -13,7 +13,8 @@ import {
   RefreshCw,
   Tag,
   Star,
-  Gift
+  Gift,
+  Settings
 } from "lucide-react";
 
 import {
@@ -49,6 +50,7 @@ const operationsItems = [
   { title: "Promo Codes", url: "/promo-codes", icon: Tag },
   { title: "Transactions", url: "/transactions", icon: CreditCard },
   { title: "Referral Management", url: "/referrals", icon: Gift },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {

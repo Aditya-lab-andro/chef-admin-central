@@ -24,6 +24,7 @@ import UserManagement from './components/UserManagement';
 import Analytics from './components/Analytics';
 import UserCreditTracker from './components/UserCreditTracker';
 import ReferralManagement from './components/ReferralManagement';
+import Settings from './components/Settings';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -119,6 +120,11 @@ const App = () => (
             <Route path="/referrals" element={
               <Layout>
                 <ReferralManagement />
+              </Layout>
+            } />
+            <Route path="/settings" element={
+              <Layout>
+                <Settings />
               </Layout>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

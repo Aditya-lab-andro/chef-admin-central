@@ -28,7 +28,7 @@ import {
 import { 
   TrendingUp, 
   TrendingDown, 
-  DollarSign, 
+  IndianRupee, 
   Users, 
   ShoppingCart, 
   Star,
@@ -40,6 +40,8 @@ import {
   MapPin,
   ChefHat
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -110,6 +112,10 @@ const Analytics: React.FC = () => {
   });
   const [timeFilter, setTimeFilter] = useState('30d');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [totalExpense, setTotalExpense] = useState<number>(0);
+  
+  const totalRevenue = 125430;
+  const netRevenue = totalRevenue - totalExpense;
 
   return (
     <div className="space-y-8">
@@ -161,15 +167,55 @@ const Analytics: React.FC = () => {
         </div>
       </div>
 
+      {/* Expense Input & Net Revenue */}
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-medium">Total Expense Input</CardTitle>
+            <CardDescription>Enter your total expenses to calculate net revenue</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="expense">Total Expense (₹)</Label>
+              <Input
+                id="expense"
+                type="number"
+                placeholder="Enter total expense"
+                value={totalExpense || ''}
+                onChange={(e) => setTotalExpense(Number(e.target.value) || 0)}
+                className="text-lg"
+              />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">Net Revenue</CardTitle>
+            <IndianRupee className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-success">₹{netRevenue.toLocaleString()}</div>
+            <div className="text-sm text-muted-foreground mt-2">
+              Total Revenue (₹{totalRevenue.toLocaleString()}) - Total Expense (₹{totalExpense.toLocaleString()})
+            </div>
+            <div className="flex items-center text-xs text-success mt-2">
+              <TrendingUp className="h-3 w-3 mr-1" />
+              Net profit calculation
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Key Metrics */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <IndianRupee className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$125,430</div>
+            <div className="text-2xl font-bold">₹1,25,430</div>
             <div className="flex items-center text-xs text-success">
               <TrendingUp className="h-3 w-3 mr-1" />
               +12.5% from last month
@@ -241,7 +287,7 @@ const Analytics: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
-                    <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Revenue']} />
+                    <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']} />
                     <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -305,7 +351,7 @@ const Analytics: React.FC = () => {
                 <CardTitle className="text-sm font-medium">This Month</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">$125,430</div>
+                <div className="text-2xl font-bold">₹1,25,430</div>
                 <div className="text-xs text-success">+12.5% vs last month</div>
               </CardContent>
             </Card>
@@ -314,7 +360,7 @@ const Analytics: React.FC = () => {
                 <CardTitle className="text-sm font-medium">This Quarter</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">$348,920</div>
+                <div className="text-2xl font-bold">₹3,48,920</div>
                 <div className="text-xs text-success">+8.7% vs last quarter</div>
               </CardContent>
             </Card>
@@ -323,7 +369,7 @@ const Analytics: React.FC = () => {
                 <CardTitle className="text-sm font-medium">This Year</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">$1,125,000</div>
+                <div className="text-2xl font-bold">₹11,25,000</div>
                 <div className="text-xs text-success">+25.3% vs last year</div>
               </CardContent>
             </Card>
@@ -340,7 +386,7 @@ const Analytics: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Revenue']} />
+                  <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']} />
                   <Legend />
                   <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2} />
                 </LineChart>
@@ -397,7 +443,7 @@ const Analytics: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-medium">${provider.revenue.toLocaleString()}</div>
+                      <div className="font-medium">₹{provider.revenue.toLocaleString()}</div>
                       <div className="text-sm text-muted-foreground">revenue</div>
                     </div>
                   </div>
@@ -433,7 +479,7 @@ const Analytics: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-muted-foreground">Revenue</div>
-                        <div className="font-medium">${zone.revenue.toLocaleString()}</div>
+                        <div className="font-medium">₹{zone.revenue.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
