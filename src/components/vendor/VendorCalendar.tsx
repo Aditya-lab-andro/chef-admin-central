@@ -127,12 +127,12 @@ export function VendorCalendar() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Preparing": return "#f59e0b";
-      case "Ready": return "#ea580c";
-      case "Picked Up": return "#3b82f6";
-      case "Delivered": return "#059669";
-      case "Cancelled": return "#ef4444";
-      default: return "#6b7280";
+      case "Preparing": return "hsl(var(--warning))";
+      case "Ready": return "hsl(16 100% 60%)";
+      case "Picked Up": return "hsl(var(--vendor-accent))";
+      case "Delivered": return "hsl(var(--success))";
+      case "Cancelled": return "hsl(var(--destructive))";
+      default: return "hsl(var(--muted-foreground))";
     }
   };
 
@@ -164,9 +164,9 @@ export function VendorCalendar() {
     const allDays = [...paddingDays, ...daysInMonth];
     
     return (
-      <div className="bg-white rounded-lg border">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">{format(currentMonth, "MMMM yyyy")}</h2>
+      <div className="bg-card rounded-lg border border-border shadow-card">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-card-foreground">{format(currentMonth, "MMMM yyyy")}</h2>
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -193,9 +193,9 @@ export function VendorCalendar() {
         </div>
         
         {/* Days of week header */}
-        <div className="grid grid-cols-7 border-b">
+        <div className="grid grid-cols-7 border-b border-border bg-muted/30">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
+            <div key={day} className="p-3 text-center text-sm font-medium text-muted-foreground">
               {day}
             </div>
           ))}
@@ -213,31 +213,36 @@ export function VendorCalendar() {
             return (
               <div
                 key={index}
-                className={`min-h-[80px] p-2 border-b border-r cursor-pointer hover:bg-muted/50 transition-colors ${
-                  !isCurrentMonth ? 'text-muted-foreground bg-muted/20' : ''
-                } ${isSelected ? 'bg-primary/10 border-primary' : ''} ${
-                  isCurrentDay ? 'bg-blue-50' : ''
-                }`}
+                className={`min-h-[90px] p-3 border-b border-r border-border cursor-pointer hover:bg-accent/20 transition-all duration-200 ${
+                  !isCurrentMonth ? 'text-muted-foreground bg-muted/10' : 'bg-card'
+                } ${isSelected ? 'bg-primary/20 border-primary ring-1 ring-primary/30' : ''} ${
+                  isCurrentDay ? 'bg-primary/10 border-primary/50' : ''
+                } ${hasOrders ? 'hover:shadow-hover' : ''}`}
                 onClick={() => setSelectedDate(day)}
               >
-                <div className={`text-sm font-medium mb-1 ${isCurrentDay ? 'text-blue-600 font-bold' : ''}`}>
+                <div className={`text-sm font-medium mb-2 ${
+                  isCurrentDay ? 'text-primary font-bold' : 'text-card-foreground'
+                } ${!isCurrentMonth ? 'opacity-50' : ''}`}>
                   {day.getDate()}
                 </div>
                 {hasOrders && (
-                  <div className="space-y-1">
-                    <div className="flex flex-wrap gap-1">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-1.5">
                       {Object.entries(statusDots).map(([status, count]) => (
                         <div
                           key={status}
-                          className="flex items-center gap-1"
+                          className="flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-background/50 backdrop-blur-sm"
                         >
                           <div
-                            className="w-2 h-2 rounded-full"
+                            className="w-2.5 h-2.5 rounded-full shadow-sm"
                             style={{ backgroundColor: getStatusColor(status) }}
                           />
-                          <span className="text-xs">{count}</span>
+                          <span className="text-xs font-medium text-card-foreground">{count}</span>
                         </div>
                       ))}
+                    </div>
+                    <div className="text-xs text-muted-foreground font-medium">
+                      {getTotalOrdersForDate(day)} order{getTotalOrdersForDate(day) !== 1 ? 's' : ''}
                     </div>
                   </div>
                 )}
@@ -277,13 +282,13 @@ export function VendorCalendar() {
 
         {/* Selected Date Orders */}
         <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <Card className="bg-card border-border shadow-card">
+            <CardHeader className="border-b border-border">
+              <CardTitle className="flex items-center gap-2 text-card-foreground">
                 📅 {selectedDate ? format(selectedDate, "MMMM dd, yyyy") : "Select a date"}
-                <span className="text-sm font-normal text-muted-foreground">
-                  ({selectedDateOrders.length} orders)
-                </span>
+                <Badge variant="secondary" className="text-xs">
+                  {selectedDateOrders.length} order{selectedDateOrders.length !== 1 ? 's' : ''}
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -292,52 +297,56 @@ export function VendorCalendar() {
                   {selectedDateOrders.map((order) => (
                     <div 
                       key={order.id} 
-                      className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                        selectedOrder?.id === order.id ? 'border-primary bg-primary/5' : 'hover:border-primary/50'
+                      className={`p-4 border border-border rounded-lg cursor-pointer transition-all duration-200 hover:shadow-hover ${
+                        selectedOrder?.id === order.id ? 'border-primary bg-primary/10 shadow-focus' : 'bg-card hover:border-primary/50'
                       }`}
                       onClick={() => setSelectedOrder(order)}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{order.id}</span>
-                          <Badge variant={order.type === "Delivery" ? "default" : "secondary"}>
+                          <span className="font-semibold text-card-foreground">{order.id}</span>
+                          <Badge variant={order.type === "Delivery" ? "default" : "secondary"} className="shadow-sm">
                             {order.type === "Delivery" ? <Truck className="h-3 w-3 mr-1" /> : <Package className="h-3 w-3 mr-1" />}
                             {order.type}
                           </Badge>
                           <Badge 
-                            style={{ backgroundColor: getStatusColor(order.status) }}
-                            className="text-white border-0"
+                            style={{ 
+                              backgroundColor: getStatusColor(order.status),
+                              color: 'white'
+                            }}
+                            className="border-0 shadow-sm"
                           >
                             {getStatusEmoji(order.status)} {order.status}
                           </Badge>
                         </div>
-                        <span className="text-sm font-medium">₹{order.amount}</span>
+                        <span className="text-sm font-bold text-primary">₹{order.amount}</span>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium">{order.customer}</p>
-                        <p className="text-sm text-muted-foreground">{order.mealName} • {order.providerType}</p>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-card-foreground">{order.customer}</p>
+                        <p className="text-sm text-muted-foreground">{order.mealName} • <span className="text-accent">{order.providerType}</span></p>
                         <p className="text-xs text-muted-foreground">{order.items} items • {order.time}</p>
-                        <p className="text-xs text-muted-foreground">{order.address}</p>
+                        <p className="text-xs text-muted-foreground truncate">{order.address}</p>
                       </div>
                     </div>
                   ))}
-                  <div className="pt-3 border-t">
-                    <div className="grid grid-cols-1 gap-2">
+                  <div className="pt-4 border-t border-border bg-muted/20 rounded-lg p-3 mt-4">
+                    <div className="grid grid-cols-1 gap-3">
                       <div className="flex justify-between items-center">
-                        <span className="font-medium">Total Orders:</span>
-                        <span className="font-bold">{selectedDateOrders.length}</span>
+                        <span className="font-medium text-card-foreground">Total Orders:</span>
+                        <Badge variant="outline" className="font-bold">{selectedDateOrders.length}</Badge>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="font-medium">Total Revenue:</span>
-                        <span className="font-bold">₹{selectedDateOrders.reduce((sum, order) => sum + order.amount, 0)}</span>
+                        <span className="font-medium text-card-foreground">Total Revenue:</span>
+                        <span className="font-bold text-primary text-lg">₹{selectedDateOrders.reduce((sum, order) => sum + order.amount, 0)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CalendarDays className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No orders scheduled for this date</p>
+                <div className="text-center py-12 text-muted-foreground">
+                  <CalendarDays className="h-16 w-16 mx-auto mb-6 opacity-40" />
+                  <p className="text-lg font-medium mb-2">No orders scheduled</p>
+                  <p className="text-sm">Select a date with orders to view details</p>
                 </div>
               )}
             </CardContent>
