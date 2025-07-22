@@ -25,6 +25,13 @@ import Analytics from './components/Analytics';
 import UserCreditTracker from './components/UserCreditTracker';
 import ReferralManagement from './components/ReferralManagement';
 import Settings from './components/Settings';
+import { VendorLayout } from './components/vendor/VendorLayout';
+import { VendorDashboard } from './components/vendor/VendorDashboard';
+import { VendorOrders } from './components/vendor/VendorOrders';
+import { VendorCalendar } from './components/vendor/VendorCalendar';
+import { VendorCustomers } from './components/vendor/VendorCustomers';
+import { VendorReviews } from './components/vendor/VendorReviews';
+import { VendorAvailability } from './components/vendor/VendorAvailability';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -127,6 +134,39 @@ const App = () => (
                 <Settings />
               </Layout>
             } />
+            
+            {/* Vendor Panel Routes */}
+            <Route path="/vendor" element={
+              <VendorLayout>
+                <VendorDashboard />
+              </VendorLayout>
+            } />
+            <Route path="/vendor/orders" element={
+              <VendorLayout>
+                <VendorOrders />
+              </VendorLayout>
+            } />
+            <Route path="/vendor/calendar" element={
+              <VendorLayout>
+                <VendorCalendar />
+              </VendorLayout>
+            } />
+            <Route path="/vendor/customers" element={
+              <VendorLayout>
+                <VendorCustomers />
+              </VendorLayout>
+            } />
+            <Route path="/vendor/reviews" element={
+              <VendorLayout>
+                <VendorReviews />
+              </VendorLayout>
+            } />
+            <Route path="/vendor/availability" element={
+              <VendorLayout>
+                <VendorAvailability />
+              </VendorLayout>
+            } />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
