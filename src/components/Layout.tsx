@@ -1,6 +1,10 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink, ChefHat } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -27,6 +31,14 @@ export function Layout({ children }: LayoutProps) {
               </div>
               
               <div className="flex items-center gap-4">
+                <Link to="/vendor">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <ChefHat className="h-4 w-4" />
+                    Vendor Panel
+                    <ExternalLink className="h-3 w-3" />
+                  </Button>
+                </Link>
+                
                 <div className="text-right">
                   <p className="text-sm font-medium text-foreground">Admin User</p>
                   <p className="text-xs text-muted-foreground">admin@tiffix.com</p>
