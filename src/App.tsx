@@ -23,6 +23,7 @@ import { TransactionManagement } from '@/components/TransactionManagement';
 import UserManagement from './components/UserManagement';
 import Analytics from './components/Analytics';
 import UserCreditTracker from './components/UserCreditTracker';
+import ReferralManagement from './components/ReferralManagement';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,34 +56,19 @@ const App = () => (
                 <MenuBuilder />
               </Layout>
             } />
-            <Route path="/orders" element={
-              <Layout>
-                <OrderManagement />
-              </Layout>
-            } />
             <Route path="/users" element={
               <Layout>
                 <UserManagement />
               </Layout>
             } />
-            <Route path="/zones" element={
-              <Layout>
-                <ServiceZones />
-              </Layout>
-            } />
-            <Route path="/analytics" element={
-              <Layout>
-                <Analytics />
-              </Layout>
-            } />
-            <Route path="/assignments" element={
-              <Layout>
-                <AssignmentDashboard />
-              </Layout>
-            } />
             <Route path="/requests" element={
               <Layout>
                 <RequestManagementDashboard />
+              </Layout>
+            } />
+            <Route path="/credits" element={
+              <Layout>
+                <UserCreditTracker />
               </Layout>
             } />
             <Route path="/provider-details" element={
@@ -93,6 +79,11 @@ const App = () => (
             <Route path="/reviews" element={
               <Layout>
                 <ReviewManagement />
+              </Layout>
+            } />
+            <Route path="/analytics" element={
+              <Layout>
+                <Analytics />
               </Layout>
             } />
             <Route path="/order-assignment" element={
@@ -125,16 +116,9 @@ const App = () => (
                 <TransactionManagement />
               </Layout>
             } />
-            <Route path="/credits" element={
+            <Route path="/referrals" element={
               <Layout>
-                <UserCreditTracker />
-              </Layout>
-            } />
-            <Route path="/settings" element={
-              <Layout>
-                <div className="text-center text-2xl text-muted-foreground py-12">
-                  Settings - Coming Soon
-                </div>
+                <ReferralManagement />
               </Layout>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
