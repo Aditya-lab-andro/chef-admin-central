@@ -24,6 +24,7 @@ import UserManagement from './components/UserManagement';
 import Analytics from './components/Analytics';
 import UserCreditTracker from './components/UserCreditTracker';
 import ReferralManagement from './components/ReferralManagement';
+import { PushNotificationManagement } from './components/PushNotificationManagement';
 import Settings from './components/Settings';
 import { VendorLayout } from './components/vendor/VendorLayout';
 import { VendorDashboard } from './components/vendor/VendorDashboard';
@@ -127,6 +128,11 @@ const App = () => (
             <Route path="/referrals" element={
               <Layout>
                 <ReferralManagement />
+              </Layout>
+            } />
+            <Route path="/notifications" element={
+              <Layout>
+                <PushNotificationManagement />
               </Layout>
             } />
             <Route path="/settings" element={
