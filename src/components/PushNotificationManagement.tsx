@@ -16,7 +16,6 @@ export function PushNotificationManagement() {
   const { toast } = useToast();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [targetAudience, setTargetAudience] = useState('all');
   const [scheduleType, setScheduleType] = useState('now');
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleTime, setScheduleTime] = useState('');
@@ -41,15 +40,6 @@ export function PushNotificationManagement() {
     setBody('');
   };
 
-  const getAudienceLabel = (audience: string) => {
-    switch (audience) {
-      case 'all': return 'All Users';
-      case 'active': return 'Active Users';
-      case 'inactive': return 'Inactive Users';
-      case 'premium': return 'Premium Users';
-      default: return 'Custom Segment';
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -103,22 +93,6 @@ export function PushNotificationManagement() {
                 <p className="text-xs text-muted-foreground">{body.length}/200 characters</p>
               </div>
 
-              {/* Target Audience */}
-              <div className="space-y-2">
-                <Label>Target Audience</Label>
-                <Select value={targetAudience} onValueChange={setTargetAudience}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Users (2,450)</SelectItem>
-                    <SelectItem value="active">Active Users (1,800)</SelectItem>
-                    <SelectItem value="inactive">Inactive Users (650)</SelectItem>
-                    <SelectItem value="premium">Premium Users (320)</SelectItem>
-                    <SelectItem value="custom">Custom Segment</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
 
               {/* Schedule Options */}
               <div className="space-y-2">
