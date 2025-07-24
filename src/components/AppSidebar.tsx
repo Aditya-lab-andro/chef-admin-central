@@ -2,7 +2,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   Building2,
   ChefHat,
-  Calendar,
   Users,
   CreditCard,
   BarChart3,
@@ -12,9 +11,8 @@ import {
   UserCheck,
   RefreshCw,
   Tag,
-  Star,
   Gift,
-  Settings
+  Bell
 } from "lucide-react";
 
 import {
@@ -33,24 +31,20 @@ const mainNavItems = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "Provider Management", url: "/providers", icon: Building2 },
   { title: "Menu Builder", url: "/menu", icon: UtensilsCrossed },
-  { title: "Meal Calendar", url: "/calendar", icon: Calendar },
 ];
 
 const operationsItems = [
   { title: "Requests", url: "/requests", icon: RefreshCw },
   { title: "Users", url: "/users", icon: Users },
-  { title: "Credit Tracker", url: "/credits", icon: CreditCard },
-  { title: "Provider Details", url: "/provider-details", icon: Building2 },
-  { title: "Reviews", url: "/reviews", icon: Star },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Order Assignment", url: "/order-assignment", icon: UserCheck },
   { title: "Kitchen Management", url: "/kitchen-management", icon: ChefHat },
   { title: "Location Zones", url: "/location-zones", icon: MapPin },
-  { title: "Subscription Plans", url: "/subscriptions", icon: Calendar },
+  { title: "Subscription Plans", url: "/subscriptions", icon: CreditCard },
   { title: "Promo Codes", url: "/promo-codes", icon: Tag },
   { title: "Transactions", url: "/transactions", icon: CreditCard },
   { title: "Referral Management", url: "/referrals", icon: Gift },
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Push Notifications", url: "/notifications", icon: Bell },
 ];
 
 export function AppSidebar() {
